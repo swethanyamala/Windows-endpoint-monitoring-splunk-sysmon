@@ -22,25 +22,34 @@ Eula.txt
 This confirmed that sysmon was extracted syccessfully and was ready for installation using powershell
 
 ## Opening Sysmon from Command Prompt
-**Sysmon is not installed by double-clicking the file.**
- It needs to be installed using PowerShell or Command Prompt with administrator permissions.
+
+**Sysmon is not installed by double-clicking the file.** It needs to be installed using PowerShell or Command Prompt with administrator permissions.
 
 I opened Command Prompt as Administrator and navigated to the extracted Sysmon folder:
+
+```cmd
 cd "C:\Users\swetha\OneDrive\Downloads\Sysmon"
+```
 
-Then I checked the extracted files using
+Then I checked the extracted files using:
 
+```cmd
 dir
+```
 
-After confirming that Sysmon64.exe was available,I installed Sysmon using:
+After confirming that `Sysmon64.exe` was available, I installed Sysmon using:
 
+```cmd
 Sysmon64.exe -accepteula -i
+```
 
-The installation, sysmon created the required windows service and driver:
+After installation, Sysmon created the required Windows service and driver:
 
+```text
 Sysmon installed.
 SysmonDrv installed.
 Starting SysmonDrv.
 Starting Sysmon.
+```
 
-This confirmed that Sysmon was installed successfully and was ready to generate endpoint logs for splunk analysis.
+This confirmed that Sysmon was installed successfully and was ready to generate endpoint logs for Splunk analysis.
