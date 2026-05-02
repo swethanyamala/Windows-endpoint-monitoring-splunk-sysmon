@@ -13,13 +13,19 @@ Sysmon was downloaded from the official Microsoft Sysinternals page. The file ca
 I extracted Sysmon to the following folder:
 
 ```text
-C:\Tools\Sysmon
+C:\Users\swetha\OneDrive\Downloads\Sysmon
+```
+
 After extraction, the Sysmon folder contained the required files:
+
+```text
 Sysmon.exe
 Sysmon64.exe
 Sysmon64a.exe
 Eula.txt
-This confirmed that sysmon was extracted syccessfully and was ready for installation using powershell
+```
+
+This confirmed that Sysmon was extracted successfully and was ready for installation using PowerShell or Command Prompt.
 
 ## Opening Sysmon from Command Prompt
 
