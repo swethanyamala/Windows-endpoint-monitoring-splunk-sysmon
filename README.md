@@ -19,7 +19,7 @@ http://localhost:8000
 ```
 ### Screenshot: Splunk Enterprise Running
 
-![Splunk Home](screenshots/01-splunk-home.png1%20.jpg)
+![Splunk Home](screenshots/01-splunk-home.png)
 
 ## Setting Up Sysmon
 
