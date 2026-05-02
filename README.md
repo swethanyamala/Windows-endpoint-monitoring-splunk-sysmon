@@ -29,7 +29,7 @@ This confirmed that Sysmon was extracted successfully and was ready for installa
 
 ## Opening Sysmon from Command Prompt
 
-**Sysmon is not installed by double-clicking the file.** It needs to be installed using PowerShell or Command Prompt with administrator permissions.
+Sysmon is not installed by double-clicking the file. It needs to be installed using PowerShell or Command Prompt with administrator permissions.
 
 I opened Command Prompt as Administrator and navigated to the extracted Sysmon folder:
 
