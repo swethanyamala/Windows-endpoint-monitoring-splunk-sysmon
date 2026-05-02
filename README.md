@@ -193,6 +193,16 @@ This is important for SOC analysis because analysts often investigate behavior p
 ### Screenshot: Windows System EventCode Search
 
 ![Windows System EventCode Search](screenshots/4%20windows-system-eventcode1-search.jpg)
+## Verifying Splunk Log Collection
+
+After setting up Splunk, I searched the main index to confirm that logs were being collected.
+
+```spl
+index=main
+```
+
+
+The search returned events, which confirmed that Splunk was successfully collecting logs from the Windows machine.
 ## Adding Sysmon Logs as a Splunk Data Input
 
 After installing Sysmon, the logs were not immediately visible in Splunk. To fix this, I added the Sysmon Operational log as a Windows Event Log data input in Splunk.
