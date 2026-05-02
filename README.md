@@ -203,6 +203,9 @@ index=main
 
 
 The search returned events, which confirmed that Splunk was successfully collecting logs from the Windows machine.
+### Screenshot: Splunk Main Index Search
+
+![Splunk Main Index Search](screenshots/05-splunk-main-index-search.jpg)
 ## Adding Sysmon Logs as a Splunk Data Input
 
 After installing Sysmon, the logs were not immediately visible in Splunk. To fix this, I added the Sysmon Operational log as a Windows Event Log data input in Splunk.
