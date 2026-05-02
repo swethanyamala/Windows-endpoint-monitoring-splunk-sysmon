@@ -21,7 +21,7 @@ Sysmon64a.exe
 Eula.txt
 This confirmed that sysmon was extracted syccessfully and was ready for installation using powershell
 
-##Opening Sysmon from Command Prompt
+## Opening Sysmon from Command Prompt
 **Sysmon is not installed by double-clicking the file.**
  It needs to be installed using PowerShell or Command Prompt with administrator permissions.
 
