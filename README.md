@@ -17,6 +17,9 @@ After installation, I opened Splunk locally in the browser using:
 ```text
 http://localhost:8000
 ```
+### Screenshot: Splunk Enterprise Running
+
+![Splunk Home](screenshots/01-splunk-home.png1%20.jpg)
 
 ## Setting Up Sysmon
 
@@ -73,6 +76,10 @@ Starting Sysmon.
 ```
 
 This confirmed that Sysmon was installed successfully and was ready to generate endpoint logs for Splunk analysis.
+
+### Screenshot: Sysmon Service Running
+
+![Sysmon Service Running](screenshots/2.%20sysmon-service-running.jpg)
 
 ## Verifying Sysmon Logs in Splunk
 
@@ -183,6 +190,9 @@ a service started
 However, logs usually do not show the exact private text typed inside a browser or website.
 
 This is important for SOC analysis because analysts often investigate behavior patterns instead of private content. For example, suspicious activity may involve PowerShell execution, file creation in a temporary folder, and a network connection to an unknown destination.
+### Screenshot: Windows System EventCode Search
+
+![Windows System EventCode Search](screenshots/4%20windows-system-eventcode1-search.jpg)
 ## Adding Sysmon Logs as a Splunk Data Input
 
 After installing Sysmon, the logs were not immediately visible in Splunk. To fix this, I added the Sysmon Operational log as a Windows Event Log data input in Splunk.
@@ -212,21 +222,7 @@ source="WinEventLog:Microsoft-Windows-Sysmon/Operational"
 ```
 
 This step connected Sysmon log collection with Splunk so that endpoint activity could be searched and analyzed.
-
-## Screenshots
-
-### Splunk Enterprise Running
-
-![Splunk Home](screenshots/01-splunk-home.png1%20.jpg)
-
-### Sysmon Service Running
-
-![Sysmon Service Running](screenshots/2.%20sysmon-service-running.jpg)
-
-### Splunk Collecting Sysmon Logs
+### Screenshot: Splunk Collecting Sysmon Logs
 
 ![Splunk Collecting Sysmon Logs](screenshots/03%20splunk-all-logs-sysmon-visible.png)
 
-### Windows System EventCode Search
-
-![Windows System EventCode Search](screenshots/4%20windows-system-eventcode1-search.jpg)
