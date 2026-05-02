@@ -30,7 +30,7 @@ Sysmon was downloaded from the official Microsoft Sysinternals page. The file ca
 I extracted Sysmon to the following folder:
 
 ```text
-C:\Users\swetha\OneDrive\Downloads\Sysmon
+C:\Users\<your username>\OneDrive\Downloads\Sysmon
 ```
 
 After extraction, the Sysmon folder contained the required files:
