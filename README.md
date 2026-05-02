@@ -212,3 +212,21 @@ source="WinEventLog:Microsoft-Windows-Sysmon/Operational"
 ```
 
 This step connected Sysmon log collection with Splunk so that endpoint activity could be searched and analyzed.
+
+## Screenshots
+
+### Splunk Enterprise Running
+
+![Splunk Home](screenshots/01-splunk-home.png1%20.jpg)
+
+### Sysmon Service Running
+
+![Sysmon Service Running](screenshots/2.%20sysmon-service-running.jpg)
+
+### Splunk Collecting Sysmon Logs
+
+![Splunk Collecting Sysmon Logs](screenshots/03%20splunk-all-logs-sysmon-visible.png)
+
+### Windows System EventCode Search
+
+![Windows System EventCode Search](screenshots/4%20windows-system-eventcode1-search.jpg)
