@@ -238,4 +238,11 @@ This step connected Sysmon log collection with Splunk so that endpoint activity 
 ### Screenshot: Splunk Collecting Sysmon Logs
 
 ![Splunk Collecting Sysmon Logs](screenshots/03%20splunk-all-logs-sysmon-visible.png)
+## Key Takeaways
+
+This project helped me understand how Splunk and Sysmon can be used together for basic endpoint monitoring.
+
+Through this lab, I learned how to install Splunk Enterprise, install Sysmon, collect Windows Event Logs, search endpoint activity, and review Windows security events.
+
+This gave me hands-on practice with basic SOC analyst tasks such as log collection, log searching, and endpoint activity analysis.
 
