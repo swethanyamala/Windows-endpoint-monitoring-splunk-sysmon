@@ -51,7 +51,7 @@ Sysmon is not installed by double-clicking the file. It needs to be installed us
 I opened Command Prompt as Administrator and navigated to the extracted Sysmon folder:
 
 ```cmd
-cd "C:\Users\<you username>\OneDrive\Downloads\Sysmon"
+cd "C:\Users\<your username>\OneDrive\Downloads\Sysmon"
 ```
 
 Then I checked the extracted files using:
