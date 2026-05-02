@@ -28,13 +28,20 @@ Sysmon is not installed by double-clicking the file. It needs to be installed us
 
 I opened Command Prompt as Administrator and navigated to the extracted Sysmon folder:
 cd "C:\Users\swetha\OneDrive\Downloads\Sysmon"
+
 Then I checked the extracted files using
+
 dir
+
 After confirming that Sysmon64.exe was available,I installed Sysmon using:
+
 Sysmon64.exe -accepteula -i
+
 The installation, sysmon created the required windows service and driver:
+
 Sysmon installed.
 SysmonDrv installed.
 Starting SysmonDrv.
 Starting Sysmon.
+
 This confirmed that Sysmon was installed successfully and was ready to generate endpoint logs for splunk analysis.
