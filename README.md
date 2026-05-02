@@ -14,7 +14,6 @@ I extracted Sysmon to the following folder:
 
 ```text
 C:\Tools\Sysmon
-
 After extraction, the Sysmon folder contained the required files:
 Sysmon.exe
 Sysmon64.exe
@@ -22,9 +21,9 @@ Sysmon64a.exe
 Eula.txt
 This confirmed that sysmon was extracted syccessfully and was ready for installation using powershell
 
-Opening Sysmon from Command Prompt
-
-Sysmon is not installed by double-clicking the file. It needs to be installed using PowerShell or Command Prompt with administrator permissions.
+##Opening Sysmon from Command Prompt
+**Sysmon is not installed by double-clicking the file.**
+ It needs to be installed using PowerShell or Command Prompt with administrator permissions.
 
 I opened Command Prompt as Administrator and navigated to the extracted Sysmon folder:
 cd "C:\Users\swetha\OneDrive\Downloads\Sysmon"
