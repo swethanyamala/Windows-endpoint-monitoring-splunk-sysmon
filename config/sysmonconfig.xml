@@ -1,0 +1,56 @@
+<Sysmon schemaversion="4.82">
+  <HashAlgorithms>md5,sha256,imphash</HashAlgorithms>
+  <EventFiltering>
+
+    <RuleGroup name="Process Creation Rules" groupRelation="or">
+      <ProcessCreate onmatch="exclude">
+        <Image condition="is">C:\Windows\System32\wbem\WmiPrvSE.exe</Image>
+        <Image condition="begin with">C:\Program Files\SplunkUniversalForwarder\</Image>
+        <Image condition="is">C:\Windows\System32\SearchIndexer.exe</Image>
+        <Image condition="is">C:\Windows\System32\audiodg.exe</Image>
+      </ProcessCreate>
+      <ProcessCreate onmatch="include">
+        <Image condition="image">powershell.exe</Image>
+        <Image condition="image">cmd.exe</Image>
+        <Image condition="image">wscript.exe</Image>
+        <Image condition="image">cscript.exe</Image>
+        <Image condition="image">mshta.exe</Image>
+        <Image condition="image">rundll32.exe</Image>
+        <Image condition="image">regsvr32.exe</Image>
+        <Image condition="image">certutil.exe</Image>
+        <Image condition="image">bitsadmin.exe</Image>
+        <Image condition="image">schtasks.exe</Image>
+      </ProcessCreate>
+    </RuleGroup>
+
+    <RuleGroup name="Network Connection Rules" groupRelation="or">
+      <NetworkConnect onmatch="exclude">
+        <Image condition="is">C:\Program Files\Windows Defender\MsMpEng.exe</Image>
+      </NetworkConnect>
+      <NetworkConnect onmatch="include">
+        <Image condition="image">powershell.exe</Image>
+        <Image condition="image">cmd.exe</Image>
+        <Image condition="image">rundll32.exe</Image>
+        <Image condition="image">mshta.exe</Image>
+        <Image condition="image">certutil.exe</Image>
+      </NetworkConnect>
+    </RuleGroup>
+
+    <RuleGroup name="CreateRemoteThread Rules" groupRelation="or">
+      <CreateRemoteThread onmatch="include">
+        <TargetImage condition="is">C:\Windows\System32\lsass.exe</TargetImage>
+        <TargetImage condition="is">C:\Windows\System32\csrss.exe</TargetImage>
+        <TargetImage condition="is">C:\Windows\System32\svchost.exe</TargetImage>
+      </CreateRemoteThread>
+    </RuleGroup>
+
+    <RuleGroup name="File Creation Rules" groupRelation="or">
+      <FileCreate onmatch="include">
+        <TargetFilename condition="contains">\AppData\Local\Temp\</TargetFilename>
+        <TargetFilename condition="contains">\Windows\Start Menu\Programs\Startup\</TargetFilename>
+        <TargetFilename condition="contains">\Downloads\</TargetFilename>
+      </FileCreate>
+    </RuleGroup>
+
+  </EventFiltering>
+</Sysmon>

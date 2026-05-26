@@ -1,343 +1,215 @@
-# Windows Endpoint Monitoring with Splunk and Sysmon
+# Windows Endpoint Monitoring & Threat Detection
+### Splunk Enterprise + Sysmon | SOC Detection Lab
 
-This is a beginner SOC lab using Sysmon and Splunk to collect and analyze Windows endpoint logs.
-
-This project focuses on setting up Splunk Enterprise on Windows and preparing it to collect Windows Event Logs and Sysmon logs for basic endpoint monitoring.
-## Project Overview
-
-This project demonstrates how Splunk Enterprise and Sysmon can be used together for Windows endpoint monitoring and basic threat detection.
-
-The lab focuses on collecting and analyzing Windows Event Logs and Sysmon telemetry to improve endpoint visibility and investigate potentially suspicious activity.
-
-Using Splunk and Sysmon, this lab can help monitor:
-- process execution
-- login activity
-- network connections
-- file creation
-- PowerShell activity
-- suspicious endpoint behavior
-
-This project also demonstrates basic SOC analyst workflows such as:
-- log collection
-- event analysis
-- endpoint monitoring
-- threat investigation
-- security visibility
-
-## Installing Splunk Enterprise
-
-I installed Splunk Enterprise on my Windows machine to collect and analyze endpoint logs.
-
-Splunk Enterprise was downloaded from the official Splunk website as a Windows 64-bit MSI installer.
-
-During installation, I selected the local system option for the Splunk service and created an admin username and password.
-
-After installation, I opened Splunk locally in the browser using:
-
-```text
-http://localhost:8000
-```
-### Screenshot: Splunk Enterprise Running
-
-![Splunk Home](screenshots/01-splunk-home.png1%20..jpg)
-
-## Setting Up Sysmon
-
-After installing Splunk, I moved to the next step: setting up Sysmon on my Windows machine.
-
-Sysmon was downloaded from the official Microsoft Sysinternals page. The file came as a ZIP folder, so I extracted it before installation.
-
-I extracted Sysmon to the following folder:
-
-```text
-C:\Users\<your username>\OneDrive\Downloads\Sysmon
-```
-
-After extraction, the Sysmon folder contained the required files:
-
-```text
-Sysmon.exe
-Sysmon64.exe
-Sysmon64a.exe
-Eula.txt
-```
-
-This confirmed that Sysmon was extracted successfully and was ready for installation using PowerShell or Command Prompt.
-
-## Installing Sysmon from Command Prompt
-
-Sysmon is not installed by double-clicking the file. It needs to be installed using PowerShell or Command Prompt with administrator permissions.
-
-I opened Command Prompt as Administrator and navigated to the extracted Sysmon folder:
-
-```cmd
-cd "C:\Users\<your username>\OneDrive\Downloads\Sysmon"
-```
-
-Then I checked the extracted files using:
-
-```cmd
-dir
-```
-
-After confirming that `Sysmon64.exe` was available, I installed Sysmon using:
-
-```cmd
-Sysmon64.exe -accepteula -i
-```
-
-After installation, Sysmon created the required Windows service and driver:
-
-```text
-Sysmon installed.
-SysmonDrv installed.
-Starting SysmonDrv.
-Starting Sysmon.
-```
-
-This confirmed that Sysmon was installed successfully and was ready to generate endpoint logs for Splunk analysis.
-
-### Screenshot: Sysmon Service Running
-
-![Sysmon Service Running](screenshots/2.%20sysmon-service-running.jpg)
-
-## Verifying Sysmon Logs in Splunk
-
-After installing Sysmon, I checked whether Splunk was receiving Sysmon logs.
-
-In Splunk Search & Reporting, I searched for Sysmon events using:
-
-```spl
-source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
-```
-
-I also checked for Sysmon-related data using:
-
-```spl
-index=main Sysmon
-```
-
-The goal was to confirm that Splunk could detect Sysmon event logs such as:
-
-```text
-EventCode=1   Process creation
-EventCode=3   Network connection
-EventCode=11  File created
-```
-
-These events are important because they help monitor endpoint activity such as program execution, network connections, and file creation.
-
-## Checking Windows Logon Events
-
-I also reviewed Windows Security logon events in Splunk using:
-
-```spl
-source="WinEventLog:Security" EventCode=4624
-| table _time Account_Name Logon_Type IpAddress Workstation_Name
-| sort - _time
-```
-
-This helped me understand that Windows can generate successful logon events for normal activity such as service logons, unlocking the laptop, and administrator actions.
-## Understanding Different Windows Log Sources
-
-In this lab, I reviewed different Windows log sources to understand what type of activity each log can show.
-
-```spl
-source="WinEventLog:Security"
-```
-
-Security logs help review login, failed login, account, and permission-related activity.
-
-```spl
-source="WinEventLog:System"
-```
-
-System logs help review service, driver, shutdown, restart, and system-level events.
-
-```spl
-source="WinEventLog:Application"
-```
-
-Application logs help review application errors, warnings, installer activity, and Splunk-related events.
-
-```spl
-source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
-```
-
-Sysmon logs provide deeper endpoint activity such as process creation, network connections, file creation, and DNS queries.
-
-This helped me understand that Splunk and Sysmon do not automatically label an application as dangerous. Instead, they provide evidence that a SOC analyst can investigate, such as suspicious processes, PowerShell activity, file creation, or unknown network connections.
-## What This Lab Can Monitor
-
-This lab is not only for checking installed applications. By using Splunk with Windows logs and Sysmon, I can review different types of endpoint activity, including:
-
-```text
-Login activity
-Process execution
-Application and service activity
-Network connections
-File creation
-Suspicious behavior
-```
-
-This helped me understand how SOC analysts use logs to answer important questions such as:
-
-```text
-Who logged in?
-What program ran?
-What file was created?
-What network connection happened?
-Did anything suspicious occur?
-```
-
-Splunk is used to search and analyze the logs, while Sysmon provides deeper endpoint visibility.
-
-## Understanding Log Visibility
-
-This lab helped me understand that Splunk and Sysmon show system activity and behavior, but they do not always show private user content.
-
-For example, logs may show:
-
-```text
-chrome.exe started
-powershell.exe started
-a DNS query was made
-a network connection happened
-a file was created
-a service started
-```
-
-However, logs usually do not show the exact private text typed inside a browser or website.
-
-This is important for SOC analysis because analysts often investigate behavior patterns instead of private content. For example, suspicious activity may involve PowerShell execution, file creation in a temporary folder, and a network connection to an unknown destination.
-### Screenshot: Windows System EventCode Search
-
-![Windows System EventCode Search](screenshots/4%20windows-system-eventcode1-search.jpg)
-## Verifying Splunk Log Collection
-
-After setting up Splunk, I searched the main index to confirm that logs were being collected.
-
-```spl
-index=main
-```
-
-
-The search returned events, which confirmed that Splunk was successfully collecting logs from the Windows machine.
-### Screenshot: Splunk Main Index Search
-
-![Splunk Main Index Search](screenshots/05-splunk-main-index-search.jpg)
-## Adding Sysmon Logs as a Splunk Data Input
-
-After installing Sysmon, the logs were not immediately visible in Splunk. To fix this, I added the Sysmon Operational log as a Windows Event Log data input in Splunk.
-
-In Splunk, I went to:
-
-```text
-Settings → Data Inputs → Local Event Log Collection
-```
-
-Then I selected the Sysmon log source:
-
-```text
-Microsoft-Windows-Sysmon/Operational
-```
-
-I kept the index as:
-
-```text
-main
-```
-
-After submitting the data input, I searched again in Splunk using:
-
-```spl
-source="WinEventLog:Microsoft-Windows-Sysmon/Operational"
-```
-
-This step connected Sysmon log collection with Splunk so that endpoint activity could be searched and analyzed.
-### Screenshot: Splunk Collecting Sysmon Logs
-
-![Splunk Collecting Sysmon Logs](screenshots/03%20splunk-all-logs-sysmon-visible.png)
-## Detecting Suspicious PowerShell Activity
-
-In this section, I simulated suspicious PowerShell activity to test whether Sysmon and Splunk could detect potentially malicious endpoint behavior.
-
-PowerShell is commonly abused by attackers for:
-- malware execution
-- persistence
-- privilege escalation
-- downloading malicious files
-- lateral movement
-
-Monitoring PowerShell activity is an important SOC analyst task because unusual PowerShell usage may indicate malicious behavior on a Windows endpoint.
+> **Built for:** Small businesses and IT teams that need endpoint threat visibility without enterprise EDR costs.
 
 ---
 
-### Simulating Suspicious PowerShell Execution
+## What This Does
 
-To generate endpoint telemetry, I executed a PowerShell command with suspicious execution behavior.
+Production-style Windows endpoint monitoring using **Splunk Enterprise** and **Sysmon** — collects, parses, and alerts on suspicious activity with MITRE ATT&CK mapping.
 
-Example command used:
-```powershell
-powershell.exe -ExecutionPolicy Bypass
+**Detects:**
+- Malicious PowerShell execution and script-based attacks
+- Binary masquerading (renamed executables evading detection)
+- Credential dumping via LSASS memory injection
+- Unauthorized logins and brute force attempts
+- Suspicious file drops in temp/startup directories
+
+---
+
+## Architecture
+
+```
+Windows Endpoint
+      │
+      ├── Sysmon Driver ──→ filters via sysmonconfig.xml
+      └── Windows Event Log
+            │
+            ▼
+     Splunk Universal Forwarder
+            │  (secure log forwarding)
+            ▼
+     Splunk Indexer  →  index=endpoint
+            │
+            ▼
+     Splunk Search Head
+      ├── Detection Alerts
+      └── SOC Dashboard
 ```
 
-## MITRE ATT&CK Techniques Observed
+**Log sources collected:**
+- `XmlWinEventLog:Microsoft-Windows-Sysmon/Operational` — process, network, file, DNS
+- `WinEventLog:Security` — logins, account changes, policy violations
+- `WinEventLog:System` — services, drivers, system errors
 
-| Technique ID | Technique |
+---
+
+## Detections Demonstrated
+
+| Technique | MITRE ID | Sysmon Event | Severity |
+|---|---|---|---|
+| PowerShell bypass execution | T1059.001 | EventCode=1 | High |
+| Binary masquerading (renamed .exe) | T1036.003 | EventCode=1 | High |
+| LSASS memory injection | T1055.001 / T1003.001 | EventCode=8 | Critical |
+| File drop in Temp/Startup directory | T1105 | EventCode=11 | Medium |
+| Brute force login attempts | T1110 | EventCode=4625 | High |
+
+---
+
+## Detection Queries
+
+### 1 — Malicious PowerShell Execution (T1059.001)
+
+Catches execution policy bypass flags including shortened versions attackers use to evade basic filters.
+
+```spl
+index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+(Image="*powershell.exe" OR OriginalFileName="PowerShell.EXE")
+(CommandLine="*-ep*" OR CommandLine="*-ExecutionPolicy*" OR CommandLine="*-encodedcommand*" OR CommandLine="*-enc*" OR CommandLine="*-nop*")
+| table _time host User ParentImage CommandLine
+| rename ParentImage as "Parent Process", CommandLine as "Full Command"
+```
+
+**Result:** ✅ Detected — captured `-ExecutionPolicy Bypass` with full command line and parent process.
+
+---
+
+### 2 — Binary Masquerading (T1036.003)
+
+Compares the running filename against the PE metadata `OriginalFileName` compiled by Microsoft. A mismatch means a binary was renamed to evade detection.
+
+```spl
+index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+| eval image_name=mvindex(split(Image, "\\"), -1)
+| eval original_name=OriginalFileName
+| where image_name != original_name AND NOT (original_name="-" OR original_name="null")
+| table _time host User Image OriginalFileName CommandLine
+```
+
+**Result:** ✅ Detected — `cmd.exe` copied and renamed to `svchost.exe` flagged immediately.
+
+---
+
+### 3 — LSASS Memory Injection / Credential Dumping (T1055.001)
+
+Catches tools like Mimikatz that inject threads into `lsass.exe` to extract credentials.
+
+```spl
+index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=8
+TargetImage="*lsass.exe"
+| stats count BY _time host SourceImage SourceProcessId TargetImage StartAddress
+| rename SourceImage as "Injecting Process", TargetImage as "Target Process"
+```
+
+**Result:** ✅ Detected — remote thread injection into `lsass.exe` captured with source process ID.
+
+---
+
+### 4 — Suspicious File Drop in Temp/Startup (T1105)
+
+```spl
+index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=11
+| search TargetFilename="*\\AppData\\Local\\Temp\\*"
+       OR TargetFilename="*\\Startup\\*"
+       OR TargetFilename="*\\Downloads\\*"
+| where match(TargetFilename, "\.(exe|ps1|bat|vbs|dll)$")
+| table _time host User TargetFilename Image
+```
+
+---
+
+## Threat Simulation Results
+
+Threats were simulated using the included `scripts/emulate_threats.ps1` script and verified in Splunk.
+
+| Simulation | MITRE ID | EventCode Triggered | Detected |
+|---|---|---|---|
+| PowerShell `-ExecutionPolicy Bypass` | T1059.001 | 1 | ✅ Yes |
+| `cmd.exe` renamed to `svchost.exe` | T1036.003 | 1 | ✅ Yes |
+| Payload written to `%TEMP%` | T1105 | 11 | ✅ Yes |
+
+---
+
+## Files in This Repo
+
+```
+├── README.md
+├── config/
+│   ├── inputs.conf          ← Splunk log collection config
+│   └── sysmonconfig.xml     ← Custom Sysmon noise-filtering rules
+├── scripts/
+│   └── emulate_threats.ps1  ← Safe threat simulation script
+├── dashboards/
+│   └── endpoint_visibility_dashboard.xml  ← Splunk dashboard XML
+└── reports/
+    └── incident-report.html ← Sample client incident report
+```
+
+---
+
+## Configuration Files
+
+### Splunk inputs.conf
+See `config/inputs.conf` — routes Security and Sysmon logs to `index=endpoint`.
+
+### Sysmon Config
+See `config/sysmonconfig.xml` — tuned ruleset that excludes noisy background processes (WMI, Defender, SearchIndexer) while capturing high-risk binaries (PowerShell, cmd, mshta, certutil, bitsadmin).
+
+---
+
+## MITRE ATT&CK Coverage
+
+| Tactic | Technique ID | Technique Name |
+|---|---|---|
+| Execution | T1059.001 | PowerShell |
+| Execution | T1059.003 | Windows Command Shell |
+| Defense Evasion | T1036.003 | Binary Masquerading |
+| Credential Access | T1003.001 | LSASS Memory Dump |
+| Credential Access | T1110 | Brute Force |
+| Persistence | T1105 | Ingress Tool Transfer |
+| C2 | T1071 | Application Layer Protocol |
+
+---
+
+## Freelance Services Offered
+
+| Service | Price |
 |---|---|
-| T1059.001 | PowerShell |
-| T1105 | Ingress Tool Transfer |
-| T1055 | Process Injection (potential monitoring use case) |
-
-These techniques are commonly associated with suspicious endpoint activity and can be investigated using Sysmon and Splunk telemetry.
-
----
-
-## Security Monitoring Use Cases
-
-This monitoring setup can help organizations and SOC analysts investigate:
-
-- suspicious PowerShell execution
-- unauthorized login attempts
-- unusual process activity
-- network connections from endpoints
-- file creation events
-- potentially malicious endpoint behavior
-
-By combining Splunk and Sysmon, analysts can improve endpoint visibility and investigate suspicious activity more efficiently.
+| Splunk + Sysmon deployment on your Windows environment | $200–$400 |
+| One-time security log audit and threat report | $150–$300 |
+| Custom detection rule development | $100–$250 |
+| SOC runbook creation for your team | $150–$250 |
+| Monthly monitoring retainer | $300–$600/mo |
 
 ---
 
-## Future Improvements
+## Technologies Used
 
-Future improvements for this project may include:
-
-- adding custom Splunk alerts
-- integrating Sigma detection rules
-- creating automated dashboards
-- adding email alerting
-- integrating Wazuh
-- monitoring failed login activity
-- adding threat hunting scenarios
-- improving PowerShell detection coverage
-
-These improvements can help expand endpoint visibility and strengthen threat detection capabilities.
+| Tool | Purpose |
+|---|---|
+| Splunk Enterprise 9.x | SIEM — ingestion, search, alerting, dashboards |
+| Sysmon v15 | Deep Windows endpoint telemetry |
+| SPL | Detection query and dashboard logic |
+| MITRE ATT&CK | Threat classification framework |
+| PowerShell | Threat simulation scripting |
 
 ---
 
-## Key Takeaways
+## Roadmap
 
-This project helped me understand how Splunk and Sysmon can be used together for basic endpoint monitoring.
-
-Through this lab, I learned how to install Splunk Enterprise, install Sysmon, collect Windows Event Logs, search endpoint activity, and review Windows security events.
-
-This gave me hands-on practice with basic SOC analyst tasks such as:
-
-- log collection
-- log searching
-- endpoint activity analysis
-- Windows event monitoring
-- Sysmon log investigation
+- [ ] Microsoft Sentinel cloud SIEM integration
+- [ ] Active Directory attack detection (Kerberoasting, Pass-the-Hash)
+- [ ] Sigma rule conversion for cross-platform SIEM deployment
+- [ ] Wazuh agent integration for active endpoint response
+- [ ] CI/CD pipeline for detection-as-code rule deployment
 
 ---
+
+## Contact
+
+**Swetha Nyamala** — Cybersecurity Freelancer | SOC Analyst | SIEM Engineer
+
+- GitHub: [@swethanyamala](https://github.com/swethanyamala)
+- Upwork: [Your Upwork Link]
+- LinkedIn: [Your LinkedIn Link]

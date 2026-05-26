@@ -1,0 +1,61 @@
+<dashboard version="1.1" theme="dark">
+  <label>SOC Endpoint Threat Dashboard</label>
+  <description>Real-time endpoint activity mapped to MITRE ATT&CK via Sysmon logs.</description>
+
+  <row>
+    <panel>
+      <chart>
+        <title>Event volume by Sysmon Event ID (last 24h)</title>
+        <search>
+          <query>index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
+| stats count by EventCode</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">bar</option>
+      </chart>
+    </panel>
+    <panel>
+      <table>
+        <title>Suspicious PowerShell executions — T1059.001</title>
+        <search>
+          <query>index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+(Image="*powershell.exe" OR OriginalFileName="PowerShell.EXE")
+(CommandLine="*-ep*" OR CommandLine="*-ExecutionPolicy*" OR CommandLine="*-encodedcommand*")
+| table _time host User ParentImage CommandLine</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+  <row>
+    <panel>
+      <table>
+        <title>Binary masquerading alerts — T1036.003</title>
+        <search>
+          <query>index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+| eval image_name=mvindex(split(Image, "\\"), -1)
+| where image_name != OriginalFileName AND NOT (OriginalFileName="-" OR OriginalFileName="null")
+| table _time host User Image OriginalFileName CommandLine</query>
+          <earliest>-7d@h</earliest>
+          <latest>now</latest>
+        </search>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>LSASS injection attempts — T1055.001</title>
+        <search>
+          <query>index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=8
+TargetImage="*lsass.exe"
+| table _time host SourceImage SourceProcessId TargetImage StartAddress</query>
+          <earliest>-7d@h</earliest>
+          <latest>now</latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
