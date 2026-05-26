@@ -278,9 +278,10 @@ Monitoring PowerShell activity is an important SOC analyst task because unusual 
 To generate endpoint telemetry, I executed a PowerShell command with suspicious execution behavior.
 
 Example command used:
-
 ```powershell
 powershell.exe -ExecutionPolicy Bypass
+```
+
 ## MITRE ATT&CK Techniques Observed
 
 | Technique ID | Technique |
@@ -290,6 +291,7 @@ powershell.exe -ExecutionPolicy Bypass
 | T1055 | Process Injection (potential monitoring use case) |
 
 These techniques are commonly associated with suspicious endpoint activity and can be investigated using Sysmon and Splunk telemetry.
+
 ---
 
 ## Security Monitoring Use Cases
@@ -331,6 +333,7 @@ This project helped me understand how Splunk and Sysmon can be used together for
 Through this lab, I learned how to install Splunk Enterprise, install Sysmon, collect Windows Event Logs, search endpoint activity, and review Windows security events.
 
 This gave me hands-on practice with basic SOC analyst tasks such as:
+
 - log collection
 - log searching
 - endpoint activity analysis
