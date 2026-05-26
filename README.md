@@ -3,6 +3,26 @@
 This is a beginner SOC lab using Sysmon and Splunk to collect and analyze Windows endpoint logs.
 
 This project focuses on setting up Splunk Enterprise on Windows and preparing it to collect Windows Event Logs and Sysmon logs for basic endpoint monitoring.
+## Project Overview
+
+This project demonstrates how Splunk Enterprise and Sysmon can be used together for Windows endpoint monitoring and basic threat detection.
+
+The lab focuses on collecting and analyzing Windows Event Logs and Sysmon telemetry to improve endpoint visibility and investigate potentially suspicious activity.
+
+Using Splunk and Sysmon, this lab can help monitor:
+- process execution
+- login activity
+- network connections
+- file creation
+- PowerShell activity
+- suspicious endpoint behavior
+
+This project also demonstrates basic SOC analyst workflows such as:
+- log collection
+- event analysis
+- endpoint monitoring
+- threat investigation
+- security visibility
 
 ## Installing Splunk Enterprise
 
@@ -238,6 +258,66 @@ This step connected Sysmon log collection with Splunk so that endpoint activity 
 ### Screenshot: Splunk Collecting Sysmon Logs
 
 ![Splunk Collecting Sysmon Logs](screenshots/03%20splunk-all-logs-sysmon-visible.png)
+## Detecting Suspicious PowerShell Activity
+
+In this section, I simulated suspicious PowerShell activity to test whether Sysmon and Splunk could detect potentially malicious endpoint behavior.
+
+PowerShell is commonly abused by attackers for:
+- malware execution
+- persistence
+- privilege escalation
+- downloading malicious files
+- lateral movement
+
+Monitoring PowerShell activity is an important SOC analyst task because unusual PowerShell usage may indicate malicious behavior on a Windows endpoint.
+
+---
+
+### Simulating Suspicious PowerShell Execution
+
+To generate endpoint telemetry, I executed a PowerShell command with suspicious execution behavior.
+
+Example command used:
+
+```powershell
+powershell.exe -ExecutionPolicy Bypass
+## MITRE ATT&CK Techniques Observed
+
+| Technique ID | Technique |
+|---|---|
+| T1059.001 | PowerShell |
+| T1105 | Ingress Tool Transfer |
+| T1055 | Process Injection (potential monitoring use case) |
+
+These techniques are commonly associated with suspicious endpoint activity and can be investigated using Sysmon and Splunk telemetry.
+## Security Monitoring Use Cases
+
+This monitoring setup can help organizations and SOC analysts investigate:
+
+- suspicious PowerShell execution
+- unauthorized login attempts
+- unusual process activity
+- network connections from endpoints
+- file creation events
+- potentially malicious endpoint behavior
+
+By combining Splunk and Sysmon, analysts can improve endpoint visibility and investigate suspicious activity more efficiently.
+## Future Improvements
+
+Future improvements for this project may include:
+
+- adding custom Splunk alerts
+- integrating Sigma detection rules
+- creating automated dashboards
+- adding email alerting
+- integrating Wazuh
+- monitoring failed login activity
+- adding threat hunting scenarios
+- improving PowerShell detection coverage
+
+These improvements can help expand endpoint visibility and strengthen threat detection capabilities.
+
+
 ## Key Takeaways
 
 This project helped me understand how Splunk and Sysmon can be used together for basic endpoint monitoring.
