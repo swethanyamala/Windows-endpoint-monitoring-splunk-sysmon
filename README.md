@@ -47,13 +47,14 @@ Windows Endpoint
 
 ## Detections Demonstrated
 
-| Technique | MITRE ID | Sysmon Event | Severity |
-|---|---|---|---|
-| PowerShell bypass execution | T1059.001 | EventCode=1 | High |
-| Binary masquerading (renamed .exe) | T1036.003 | EventCode=1 | High |
-| LSASS memory injection | T1055.001 / T1003.001 | EventCode=8 | Critical |
-| File drop in Temp/Startup directory | T1105 | EventCode=11 | Medium |
-| Brute force login attempts | T1110 | EventCode=4625 | High |
+| Attack Technique | MITRE ID | Log Source & Event ID | Detection Query | Severity |
+|---|---|---|---|---|
+| PowerShell bypass execution | T1059.001 | Sysmon: EventCode=1 | `powershell.exe` + `-ExecutionPolicy Bypass` | High |
+| Suspicious process spawn | T1055 | Sysmon: EventCode=1 | Unusual parent-child process pairs | High |
+| Network connection to unknown host | T1071 | Sysmon: EventCode=3 | Outbound connection from non-browser process | Medium |
+| File drop in temp directory | T1105 | Sysmon: EventCode=11 | File creation in `%TEMP%` or `%APPDATA%` | Medium |
+| Failed login brute force | T1110 | Security: EventCode=4625 | 5+ failed logins within 60 seconds | High |
+| Successful login after failures | T1078 | Security: EventCode=4624 | Login success following failure spike | Critical |
 
 ---
 
@@ -116,6 +117,23 @@ index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" Even
 | where match(TargetFilename, "\.(exe|ps1|bat|vbs|dll)$")
 | table _time host User TargetFilename Image
 ```
+### 5 — Brute Force Login Detection (T1110)
+
+Detects multiple failed login attempts from the same source
+within a 60 second window — a clear sign of password attack.
+
+```spl
+index=endpoint source="WinEventLog:Security" EventCode=4625
+| bucket _time span=60s
+| stats count as FailedLogins by _time, Account_Name, IpAddress, ComputerName
+| where FailedLogins >= 5
+| sort - FailedLogins
+| rename Account_Name as "Targeted Account", IpAddress as "Source IP"
+```
+
+**Result:** ✅ Alert fired — 8 failed login attempts from single
+source detected within 60 second window. Account locked out
+after threshold breach.
 
 ---
 
@@ -199,11 +217,15 @@ Available for freelance engagements in:
 
 ## Roadmap
 
+## Roadmap
+
 - [ ] Microsoft Sentinel cloud SIEM integration
 - [ ] Active Directory attack detection (Kerberoasting, Pass-the-Hash)
 - [ ] Sigma rule conversion for cross-platform SIEM deployment
 - [ ] Wazuh agent integration for active endpoint response
 - [ ] CI/CD pipeline for detection-as-code rule deployment
+- [ ] Email alerting via Splunk notification actions
+- [ ] Automated incident response playbooks
 
 ---
 
@@ -212,5 +234,4 @@ Available for freelance engagements in:
 **Swetha Nyamala** — Cybersecurity Freelancer | SOC Analyst | SIEM Engineer
 
 - GitHub: [@swethanyamala](https://github.com/swethanyamala)
-- Upwork: [Your Upwork Link]
-- LinkedIn: [swethanyamala2003@gmail.com]
+- Email: [swethanyamala2003@gmail.com]
