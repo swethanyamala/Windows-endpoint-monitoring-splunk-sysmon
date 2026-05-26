@@ -174,13 +174,14 @@ See `config/sysmonconfig.xml` — tuned ruleset that excludes noisy background p
 
 ## Freelance Services Offered
 
-| Service | Price |
-|---|---|
-| Splunk + Sysmon deployment on your Windows environment | $200–$400 |
-| One-time security log audit and threat report | $150–$300 |
-| Custom detection rule development | $100–$250 |
-| SOC runbook creation for your team | $150–$250 |
-| Monthly monitoring retainer | $300–$600/mo |
+Available for freelance engagements in:
+
+- Splunk + Sysmon deployment and configuration
+- Windows endpoint security audit and log review
+- Custom detection rule and alert development
+- SOC runbook creation for your security team
+- Ongoing monthly monitoring and threat reporting
+
 
 ---
 
@@ -212,4 +213,4 @@ See `config/sysmonconfig.xml` — tuned ruleset that excludes noisy background p
 
 - GitHub: [@swethanyamala](https://github.com/swethanyamala)
 - Upwork: [Your Upwork Link]
-- LinkedIn: [Your LinkedIn Link]
+- LinkedIn: [swethanyamala2003@gmail.com]
