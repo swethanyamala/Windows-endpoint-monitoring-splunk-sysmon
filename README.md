@@ -290,6 +290,8 @@ powershell.exe -ExecutionPolicy Bypass
 | T1055 | Process Injection (potential monitoring use case) |
 
 These techniques are commonly associated with suspicious endpoint activity and can be investigated using Sysmon and Splunk telemetry.
+---
+
 ## Security Monitoring Use Cases
 
 This monitoring setup can help organizations and SOC analysts investigate:
@@ -302,6 +304,9 @@ This monitoring setup can help organizations and SOC analysts investigate:
 - potentially malicious endpoint behavior
 
 By combining Splunk and Sysmon, analysts can improve endpoint visibility and investigate suspicious activity more efficiently.
+
+---
+
 ## Future Improvements
 
 Future improvements for this project may include:
@@ -317,6 +322,7 @@ Future improvements for this project may include:
 
 These improvements can help expand endpoint visibility and strengthen threat detection capabilities.
 
+---
 
 ## Key Takeaways
 
@@ -324,5 +330,11 @@ This project helped me understand how Splunk and Sysmon can be used together for
 
 Through this lab, I learned how to install Splunk Enterprise, install Sysmon, collect Windows Event Logs, search endpoint activity, and review Windows security events.
 
-This gave me hands-on practice with basic SOC analyst tasks such as log collection, log searching, and endpoint activity analysis.
+This gave me hands-on practice with basic SOC analyst tasks such as:
+- log collection
+- log searching
+- endpoint activity analysis
+- Windows event monitoring
+- Sysmon log investigation
 
+---
