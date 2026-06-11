@@ -20,23 +20,61 @@ Production-style Windows endpoint monitoring using **Splunk Enterprise** and **S
 
 ## Architecture
 
-```
+## Data Ingestion Pipeline
+
+### Windows Endpoint Pipeline
+
+```text
 Windows Endpoint
       │
-      ├── Sysmon Driver ──→ filters via sysmonconfig.xml
-      └── Windows Event Log
-            │
-            ▼
-     Splunk Universal Forwarder
-            │  (secure log forwarding)
-            ▼
-     Splunk Indexer  →  index=endpoint
-            │
-            ▼
-     Splunk Search Head
-      ├── Detection Alerts
-      └── SOC Dashboard
+      ▼
+    Sysmon
+      │
+      ▼
+Windows Event Logs
+      │
+      ▼
+Splunk Universal Forwarder
+      │
+      ▼
+Splunk Enterprise (index=endpoint)
+      │
+      ├── Detection Rules
+      ├── Alerts
+      └── Dashboards
 ```
+
+### Linux Endpoint Pipeline
+
+```text
+Ubuntu Linux
+      │
+      ├── /var/log/auth.log
+      └── /var/log/syslog
+            │
+            ▼
+Splunk Universal Forwarder
+            │
+            ▼
+Splunk Enterprise (index=linux)
+            │
+            ├── Failed Login Detection
+            ├── SSH Monitoring
+            └── Log Analysis Dashboard
+```
+
+### Data Sources Collected
+
+* Sysmon Operational Logs
+* Windows Security Logs
+* Windows System Logs
+* Linux auth.log
+* Linux syslog
+
+### Purpose
+
+This SOC lab demonstrates end-to-end log ingestion, monitoring, detection engineering, and alerting across Windows and Linux endpoints using Splunk Enterprise and Sysmon.
+
 
 **Log sources collected:**
 - `XmlWinEventLog:Microsoft-Windows-Sysmon/Operational` — process, network, file, DNS
