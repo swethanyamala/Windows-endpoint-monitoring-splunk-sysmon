@@ -116,6 +116,9 @@ index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" Even
        OR TargetFilename="*\\Downloads\\*"
 | where match(TargetFilename, "\.(exe|ps1|bat|vbs|dll)$")
 | table _time host User TargetFilename Image
+**Result:** ✅ Alert fired — `.exe` file dropped into `%TEMP%`
+directory by non-installer process detected and logged with
+full file path and parent process details.
 ```
 ### 5 — Brute Force Login Detection (T1110)
 
@@ -215,7 +218,6 @@ Available for freelance engagements in:
 
 ---
 
-## Roadmap
 
 ## Roadmap
 
