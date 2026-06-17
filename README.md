@@ -1,4 +1,4 @@
-# Windows Endpoint Monitoring & Threat Detection
+# Windows & Linux Endpoint Monitoring & Threat Detection
 ### Splunk Enterprise + Sysmon | SOC Detection Lab
 
 > **Built for:** Small businesses and IT teams that need endpoint threat visibility without enterprise EDR costs.
@@ -7,13 +7,13 @@
 
 ## What This Does
 
-Production-style Windows endpoint monitoring using **Splunk Enterprise** and **Sysmon** — collects, parses, and alerts on suspicious activity with MITRE ATT&CK mapping.
+Production-style Windows and Linux endpoint monitoring using **Splunk Enterprise** and **Sysmon** — collects, parses, and alerts on suspicious activity with MITRE ATT&CK mapping.
 
 **Detects:**
 - Malicious PowerShell execution and script-based attacks
 - Binary masquerading (renamed executables evading detection)
 - Credential dumping via LSASS memory access
-- Unauthorized logins and brute force attempts
+- Unauthorized logins and brute force attempts (Windows and Linux)
 - Suspicious file drops in temp/startup directories
 
 ---
@@ -80,6 +80,7 @@ This SOC lab demonstrates end-to-end log ingestion, monitoring, detection engine
 - `XmlWinEventLog:Microsoft-Windows-Sysmon/Operational` — process, network, file, DNS
 - `WinEventLog:Security` — logins, account changes, policy violations
 - `WinEventLog:System` — services, drivers, system errors
+- `/var/log/auth.log` — Linux authentication and SSH events
 
 ---
 
@@ -91,7 +92,8 @@ This SOC lab demonstrates end-to-end log ingestion, monitoring, detection engine
 | Binary masquerading (renamed exe) | T1036.003 | Sysmon: EventCode=1 | Image name ≠ OriginalFileName | High |
 | LSASS credential dumping | T1003.001 | Sysmon: EventCode=8 | Remote thread access into `lsass.exe` | Critical |
 | File drop in temp directory | T1105 | Sysmon: EventCode=11 | File creation in `%TEMP%` or `%APPDATA%` | Medium |
-| Failed login brute force | T1110 | Security: EventCode=4625 | 5+ failed logins within 60 seconds | High |
+| Failed login brute force (Windows) | T1110 | Security: EventCode=4625 | 5+ failed logins within 60 seconds | High |
+| SSH brute force (Linux) | T1110 | auth.log: "Failed password" | 5+ failures in 60s from one IP | High |
 | Successful login after failures | T1078 | Security: EventCode=4624 | Login success following failure spike | Critical |
 
 ---
@@ -160,7 +162,7 @@ index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" Even
 
 ---
 
-### 5 — Brute Force Login Detection (T1110)
+### 5 — Brute Force Login Detection — Windows (T1110)
 
 Detects multiple failed login attempts from the same source within a 60 second window — a clear sign of password attack.
 
@@ -177,16 +179,59 @@ index=endpoint source="WinEventLog:Security" EventCode=4625
 
 ---
 
+### 6 — SSH Brute Force Detection — Linux (T1110)
+
+Detects repeated failed SSH login attempts from a single source IP within a 60 second window on Linux endpoints — the Linux equivalent of the Windows 4625 brute force detection.
+
+```spl
+index=linux source="/var/log/auth.log" "Failed password"
+| rex field=_raw "Failed password for (invalid user )?(?<user>\S+) from (?<src_ip>\d+\.\d+\.\d+\.\d+)"
+| bucket _time span=60s
+| stats count as FailedAttempts by _time, user, src_ip, host
+| where FailedAttempts >= 5
+| sort - FailedAttempts
+| rename user as "Targeted User", src_ip as "Source IP"
+```
+
+**Result:** ✅ Detected — repeated failed SSH logins from a single IP captured and grouped within the 60 second window, with targeted username and source IP extracted.
+
+---
+
 ## Threat Simulation Results
 
 Threats were simulated using the included `scripts/emulate_threats.ps1` script and verified in Splunk.
 
-| Simulation | MITRE ID | EventCode Triggered | Detected |
+| Simulation | MITRE ID | EventCode / Source Triggered | Detected |
 |---|---|---|---|
 | PowerShell `-ExecutionPolicy Bypass` | T1059.001 | 1 | ✅ Yes |
 | `cmd.exe` renamed to `svchost.exe` | T1036.003 | 1 | ✅ Yes |
 | Payload written to `%TEMP%` | T1105 | 11 | ✅ Yes |
-| Brute force (8 failed logins) | T1110 | 4625 | ✅ Yes |
+| Brute force (8 failed logins, Windows) | T1110 | 4625 | ✅ Yes |
+| SSH brute force (Linux) | T1110 | auth.log | ✅ Yes |
+
+---
+
+## Alerting
+
+Detections are configured as scheduled Splunk alerts that notify the SOC team by email when a threshold is breached.
+
+**Configuration (per detection):**
+
+```text
+Saved Search → Save As → Alert
+  Trigger condition : Number of Results > 0
+  Schedule          : Run on cron (e.g. every 5 minutes)
+  Action            : Send email
+  To                : soc-team@client.com
+  Subject           : [ALERT] Brute force detected on $result.host$
+  Include           : Search results table, link to Splunk search
+```
+
+**Alerts enabled and verified for:**
+- Brute force login (Windows — T1110)
+- SSH brute force (Linux — T1110)
+- LSASS credential dumping (T1003.001)
+- Binary masquerading (T1036.003)
 
 ---
 
@@ -236,7 +281,7 @@ See `config/sysmonconfig.xml` — tuned ruleset that excludes noisy background p
 Available for freelance engagements in:
 
 - Splunk + Sysmon deployment and configuration
-- Windows endpoint security audit and log review
+- Windows and Linux endpoint security audit and log review
 - Custom detection rule and alert development
 - SOC runbook creation for your security team
 - Ongoing monthly monitoring and threat reporting
@@ -264,7 +309,6 @@ Available for freelance engagements in:
 - [ ] Sigma rule conversion for cross-platform SIEM deployment
 - [ ] Wazuh agent integration for active endpoint response
 - [ ] CI/CD pipeline for detection-as-code rule deployment
-- [ ] Email alerting via Splunk notification actions
 - [ ] Automated incident response playbooks
 
 ---
