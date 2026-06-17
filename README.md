@@ -12,7 +12,7 @@ Production-style Windows endpoint monitoring using **Splunk Enterprise** and **S
 **Detects:**
 - Malicious PowerShell execution and script-based attacks
 - Binary masquerading (renamed executables evading detection)
-- Credential dumping via LSASS memory injection
+- Credential dumping via LSASS memory access
 - Unauthorized logins and brute force attempts
 - Suspicious file drops in temp/startup directories
 
@@ -88,8 +88,8 @@ This SOC lab demonstrates end-to-end log ingestion, monitoring, detection engine
 | Attack Technique | MITRE ID | Log Source & Event ID | Detection Query | Severity |
 |---|---|---|---|---|
 | PowerShell bypass execution | T1059.001 | Sysmon: EventCode=1 | `powershell.exe` + `-ExecutionPolicy Bypass` | High |
-| Suspicious process spawn | T1055 | Sysmon: EventCode=1 | Unusual parent-child process pairs | High |
-| Network connection to unknown host | T1071 | Sysmon: EventCode=3 | Outbound connection from non-browser process | Medium |
+| Binary masquerading (renamed exe) | T1036.003 | Sysmon: EventCode=1 | Image name ≠ OriginalFileName | High |
+| LSASS credential dumping | T1003.001 | Sysmon: EventCode=8 | Remote thread access into `lsass.exe` | Critical |
 | File drop in temp directory | T1105 | Sysmon: EventCode=11 | File creation in `%TEMP%` or `%APPDATA%` | Medium |
 | Failed login brute force | T1110 | Security: EventCode=4625 | 5+ failed logins within 60 seconds | High |
 | Successful login after failures | T1078 | Security: EventCode=4624 | Login success following failure spike | Critical |
@@ -130,18 +130,18 @@ index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" Even
 
 ---
 
-### 3 — LSASS Memory Injection / Credential Dumping (T1055.001)
+### 3 — LSASS Credential Dumping (T1003.001)
 
-Catches tools like Mimikatz that inject threads into `lsass.exe` to extract credentials.
+Catches tools like Mimikatz that access `lsass.exe` memory to extract credentials.
 
 ```spl
 index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=8
 TargetImage="*lsass.exe"
 | stats count BY _time host SourceImage SourceProcessId TargetImage StartAddress
-| rename SourceImage as "Injecting Process", TargetImage as "Target Process"
+| rename SourceImage as "Accessing Process", TargetImage as "Target Process"
 ```
 
-**Result:** ✅ Detected — remote thread injection into `lsass.exe` captured with source process ID.
+**Result:** ✅ Detected — remote thread access into `lsass.exe` captured with source process ID.
 
 ---
 
@@ -154,14 +154,15 @@ index=endpoint source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" Even
        OR TargetFilename="*\\Downloads\\*"
 | where match(TargetFilename, "\.(exe|ps1|bat|vbs|dll)$")
 | table _time host User TargetFilename Image
-**Result:** ✅ Alert fired — `.exe` file dropped into `%TEMP%`
-directory by non-installer process detected and logged with
-full file path and parent process details.
 ```
+
+**Result:** ✅ Alert fired — `.exe` file dropped into `%TEMP%` directory by non-installer process detected and logged with full file path and parent process details.
+
+---
+
 ### 5 — Brute Force Login Detection (T1110)
 
-Detects multiple failed login attempts from the same source
-within a 60 second window — a clear sign of password attack.
+Detects multiple failed login attempts from the same source within a 60 second window — a clear sign of password attack.
 
 ```spl
 index=endpoint source="WinEventLog:Security" EventCode=4625
@@ -172,9 +173,7 @@ index=endpoint source="WinEventLog:Security" EventCode=4625
 | rename Account_Name as "Targeted Account", IpAddress as "Source IP"
 ```
 
-**Result:** ✅ Alert fired — 8 failed login attempts from single
-source detected within 60 second window. Account locked out
-after threshold breach.
+**Result:** ✅ Alert fired — 8 failed login attempts from single source detected within 60 second window. Account locked out after threshold breach.
 
 ---
 
@@ -187,6 +186,7 @@ Threats were simulated using the included `scripts/emulate_threats.ps1` script a
 | PowerShell `-ExecutionPolicy Bypass` | T1059.001 | 1 | ✅ Yes |
 | `cmd.exe` renamed to `svchost.exe` | T1036.003 | 1 | ✅ Yes |
 | Payload written to `%TEMP%` | T1105 | 11 | ✅ Yes |
+| Brute force (8 failed logins) | T1110 | 4625 | ✅ Yes |
 
 ---
 
@@ -201,6 +201,7 @@ Threats were simulated using the included `scripts/emulate_threats.ps1` script a
 │   └── emulate_threats.ps1  ← Safe threat simulation script
 ├── dashboards/
 │   └── endpoint_visibility_dashboard.xml  ← Splunk dashboard XML
+├── screenshots/             ← Dashboard and alert screenshots
 └── reports/
     └── incident-report.html ← Sample client incident report
 ```
@@ -221,13 +222,12 @@ See `config/sysmonconfig.xml` — tuned ruleset that excludes noisy background p
 
 | Tactic | Technique ID | Technique Name |
 |---|---|---|
-| Execution | T1059.001 | PowerShell |
-| Execution | T1059.003 | Windows Command Shell |
-| Defense Evasion | T1036.003 | Binary Masquerading |
-| Credential Access | T1003.001 | LSASS Memory Dump |
+| Execution | T1059.001 | Command and Scripting Interpreter: PowerShell |
+| Defense Evasion | T1036.003 | Masquerading: Rename System Utilities |
+| Credential Access | T1003.001 | OS Credential Dumping: LSASS Memory |
 | Credential Access | T1110 | Brute Force |
-| Persistence | T1105 | Ingress Tool Transfer |
-| C2 | T1071 | Application Layer Protocol |
+| Initial Access / Lateral Movement | T1078 | Valid Accounts |
+| Command and Control | T1105 | Ingress Tool Transfer |
 
 ---
 
@@ -274,4 +274,4 @@ Available for freelance engagements in:
 **Swetha Nyamala** — Cybersecurity Freelancer | SOC Analyst | SIEM Engineer
 
 - GitHub: [@swethanyamala](https://github.com/swethanyamala)
-- Email: [swethanyamala2003@gmail.com]
+- Email: swethanyamala2003@gmail.com
