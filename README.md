@@ -75,7 +75,6 @@ Splunk Enterprise (index=linux)
 
 This SOC lab demonstrates end-to-end log ingestion, monitoring, detection engineering, and alerting across Windows and Linux endpoints using Splunk Enterprise and Sysmon.
 
-
 **Log sources collected:**
 - `XmlWinEventLog:Microsoft-Windows-Sysmon/Operational` — process, network, file, DNS
 - `WinEventLog:Security` — logins, account changes, policy violations
@@ -247,8 +246,13 @@ Saved Search → Save As → Alert
 ├── dashboards/
 │   └── endpoint_visibility_dashboard.xml  ← Splunk dashboard XML
 ├── screenshots/             ← Dashboard and alert screenshots
-└── reports/
-    └── incident-report.html ← Sample client incident report
+├── reports/
+│   └── incident-report.html ← Sample client incident report
+└── sigma-rules/             ← Vendor-agnostic Sigma detection rules
+    ├── brute_force_windows.yml
+    ├── powershell_execution.yml
+    ├── lsass_credential_dumping.yml
+    └── binary_masquerading.yml
 ```
 
 ---
@@ -276,15 +280,18 @@ See `config/sysmonconfig.xml` — tuned ruleset that excludes noisy background p
 
 ---
 
-## Freelance Services Offered
+## Sigma Rule Coverage
 
-Available for freelance engagements in:
+Sigma rules provide vendor-agnostic detection logic that can be converted to any SIEM's query language (Splunk SPL, Elastic, QRadar, etc.), making detections portable across platforms.
 
-- Splunk + Sysmon deployment and configuration
-- Windows and Linux endpoint security audit and log review
-- Custom detection rule and alert development
-- SOC runbook creation for your security team
-- Ongoing monthly monitoring and threat reporting
+| Detection | Sigma File | MITRE ID |
+|---|---|---|
+| Brute Force Login (Windows) | `sigma-rules/brute_force_windows.yml` | T1110 |
+| PowerShell Execution Bypass | `sigma-rules/powershell_execution.yml` | T1059.001 |
+| LSASS Credential Dumping | `sigma-rules/lsass_credential_dumping.yml` | T1003.001 |
+| Binary Masquerading | `sigma-rules/binary_masquerading.yml` | T1036.003 |
+
+---
 
 
 ---
@@ -301,12 +308,11 @@ Available for freelance engagements in:
 
 ---
 
-
 ## Roadmap
 
 - [ ] Microsoft Sentinel cloud SIEM integration
 - [ ] Active Directory attack detection (Kerberoasting, Pass-the-Hash)
-- [ ] Sigma rule conversion for cross-platform SIEM deployment
+- [x] Sigma rule conversion for cross-platform SIEM deployment
 - [ ] Wazuh agent integration for active endpoint response
 - [ ] CI/CD pipeline for detection-as-code rule deployment
 - [ ] Automated incident response playbooks
