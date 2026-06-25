@@ -1,0 +1,23 @@
+﻿title: Windows Brute Force Login Detection
+id: a1b2c3d4-1111-4e5f-8a9b-000000000001
+status: experimental
+description: Detects 5 or more failed login attempts from the same source within a 60 second window, indicating a brute force password attack.
+references:
+    - https://attack.mitre.org/techniques/T1110/
+author: Swetha Nyamala
+date: 2026/06/25
+tags:
+    - attack.credential_access
+    - attack.t1110
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4625
+    timeframe: 60s
+    condition: selection | count() by IpAddress >= 5
+falsepositives:
+    - Misconfigured service accounts
+    - Users forgetting passwords
+level: high

@@ -1,0 +1,28 @@
+title: Suspicious PowerShell Execution Policy Bypass
+   id: a1b2c3d4-2222-4e5f-8a9b-000000000002
+   status: experimental
+   description: Detects PowerShell execution with flags commonly used to bypass execution policy or obfuscate commands.
+   references:
+       - https://attack.mitre.org/techniques/T1059/001/
+   author: Swetha Nyamala
+   date: 2026/06/25
+   tags:
+       - attack.execution
+       - attack.t1059.001
+   logsource:
+       product: windows
+       category: process_creation
+   detection:
+       selection:
+           Image|endswith: '\powershell.exe'
+       flags:
+           CommandLine|contains:
+               - '-ep '
+               - '-ExecutionPolicy'
+               - '-encodedcommand'
+               - '-enc '
+               - '-nop'
+       condition: selection and flags
+   falsepositives:
+       - Legitimate admin scripts using encoded commands
+   level: high

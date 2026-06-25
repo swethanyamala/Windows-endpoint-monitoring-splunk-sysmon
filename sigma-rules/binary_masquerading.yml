@@ -1,0 +1,21 @@
+title: Binary Masquerading - Renamed System Utility
+id: a1b2c3d4-4444-4e5f-8a9b-000000000004
+status: experimental
+description: Detects a mismatch between a process's running filename and its original compiled filename (PE metadata), indicating a renamed binary used to evade detection.
+references:
+    - https://attack.mitre.org/techniques/T1036/003/
+author: Swetha Nyamala
+date: 2026/06/25
+tags:
+    - attack.defense_evasion
+    - attack.t1036.003
+logsource:
+    product: windows
+    category: process_creation
+detection:
+    selection:
+        EventID: 1
+    condition: selection | filter Image_filename != OriginalFileName
+falsepositives:
+    - Custom-built internal tools without proper PE metadata
+level: high
